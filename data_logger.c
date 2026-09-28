@@ -1,4 +1,5 @@
 #include <io.h>
+#include <interrupt.h>
 #include <delay.h>
 #include "lcd.h"
 #define SS(x)(x==1 ? (PORTC|= 1<<3):(PORTC&=~(1<<3)))
@@ -7,6 +8,8 @@ void send_data_7seg_keypad(char data_7seg,char sel);
 flash char ss_code[]=
 {
     0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
+    
+char d1=1,d2=2,d3=3,d4=4,sel;
 
 
 void main(void)
@@ -25,12 +28,14 @@ void main(void)
     
     TCCR0B=0x3;
     TIMSK0=0x1;
-    TCNT0=5;
+    TCNT0=5;  
+    
+    #asm("sei")
     
     while (1)
     {
         
-        send_data_7seg_keypad(0x3F,0xF1);
+        
     }
 }
 
@@ -46,4 +51,34 @@ void send_data_7seg_keypad(char data_7seg,char sel)
 	SPDR=data_7seg;
 	while(!(SPSR & (1<<SPIF)));//wait until transfer is finished
 	SS(1);
+}
+
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+    // Blank all digits first
+    send_data_7seg_keypad(0x00, 0xF0);
+
+    switch (sel)
+    {
+        case 0:
+            send_data_7seg_keypad(ss_code[d1], 0xE1);
+            break;
+
+        case 1:
+            send_data_7seg_keypad(ss_code[d2], 0xD2);
+            break;
+
+        case 2:
+            send_data_7seg_keypad(ss_code[d3], 0xB4);
+            break;
+
+        case 3:
+            send_data_7seg_keypad(ss_code[d4], 0x78);
+            break;
+    }
+
+    // Cycle through digits 0, 1, 2, 3
+    sel++;
+    if (sel >= 4)
+        sel = 0;
 }
