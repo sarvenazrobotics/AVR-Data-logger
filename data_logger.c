@@ -16,6 +16,16 @@ flash char ss_code[]=
     
 char d1,d2,d3,d4,sel;
 char keypad;
+volatile char keypad = 0;  // Last detected key; 0 means no key
+volatile unsigned char key_rows[4] = {0, 0, 0, 0};
+
+flash char keymap[4][4] =
+{
+    {'7', '8', '9', '/'},
+    {'4', '5', '6', '*'},
+    {'1', '2', '3', '-'},
+    {'C', '0', '=', '+'}
+};
 
 
 void main(void)
@@ -108,4 +118,23 @@ else if (C4 == 0)
     sel++;
     if (sel >= 4)
         sel = 0;
+}
+
+
+char decode_keypad(void)
+{
+    unsigned char r, c;
+
+    for (r = 0; r < 4; r++)
+    {
+        for (c = 0; c < 4; c++)
+        {
+            if (key_rows[r] & (1 << c))
+            {
+                return keymap[r][c];
+            }
+        }
+    }
+
+    return 0;  // No key pressed
 }
