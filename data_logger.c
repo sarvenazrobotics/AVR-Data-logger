@@ -3,10 +3,10 @@
 #include <delay.h>
 #include "lcd.h"
 #define SS(x)(x==1 ? (PORTC|= 1<<3):(PORTC&=~(1<<3)))
-#define C1((PINB & (1<<0))>>0)
-#define C2((PINB & (1<<1))>>1)
-#define C3((PINB & (1<<2))>>2)
-#define C4((PINB & (1<<4))>>4)
+#define C1 ((PINB & (1 << 0)) >> 0)
+#define C2 ((PINB & (1 << 1)) >> 1)
+#define C3 ((PINB & (1 << 2)) >> 2)
+#define C4 ((PINB & (1 << 4)) >> 4)
 
 
 void send_data_7seg_keypad(char data_7seg,char sel);
@@ -14,7 +14,7 @@ flash char ss_code[]=
 {
     0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
     
-char d1=1,d2=2,d3=3,d4=4,sel;
+char d1,d2,d3,d4,sel;
 char keypad;
 
 
@@ -63,6 +63,25 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
 
     keypad=(C4<<4)|(C3<<3)|(C2<<2)|(C1<<1);
+        send_data_7seg_keypad(ss_code[d1], 0xE1);
+delay_us(5);
+
+if (C1 == 0)
+{
+    keypad = 7;
+}
+else if (C2 == 0)
+{
+    keypad = 8;
+}
+else if (C3 == 0)
+{
+    keypad = 9;
+}
+else if (C4 == 0)
+{
+    keypad = 10;  // Example: division key
+}
     // Blank all digits first
     send_data_7seg_keypad(0x00, 0xF0);
 
