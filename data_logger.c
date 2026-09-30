@@ -76,7 +76,8 @@ void main(void)
     unsigned char last_key;
     unsigned char col = 0;
     unsigned char row = 0;
-    char h,s,m;
+    unsigned char h,s,m;
+    char time_str[17];
 
     last_key = 0;
 
@@ -112,7 +113,7 @@ void main(void)
 
     SPSR = 0;
     
-    twi_init();
+    i2c_init();
     
     delay_ms(500);
 
@@ -141,8 +142,8 @@ void main(void)
 
     while (1)
     
-    {    
-        rtc_get_time(&h,&m,&s);
+    {      
+        
         /* Process a newly pressed key only once */
         if ((keypad != 0) && (last_key == 0))
         {
@@ -199,8 +200,19 @@ void main(void)
         {
             last_key = 0;
         }
+    } 
+    rtc_get_time(&h, &m, &s);
+
+    sprintf(time_str, "Time: %02u:%02u:%02u",
+            (unsigned int)h,
+            (unsigned int)m,
+            (unsigned int)s);
+
+    lcd_gotoxy(0, 1);
+    lcd_puts(time_str);
+
+    delay_ms(200);
     }
-}
 
 /* =========================================================
    SEND DATA TO TWO CASCADED 74HC595 REGISTERS
