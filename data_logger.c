@@ -1,5 +1,6 @@
 #include <io.h>
 #include <interrupt.h>
+#include <stdio.h>
 #include <delay.h>
 #include "lcd.h"
 
@@ -58,6 +59,7 @@ volatile unsigned char d4 = 0;
 volatile unsigned char sel = 0;
 volatile unsigned char keypad = 0;
 
+
 volatile unsigned char key_rows[4] =
 {
     0, 0, 0, 0
@@ -70,6 +72,8 @@ volatile unsigned char key_rows[4] =
 void main(void)
 {
     unsigned char last_key;
+    unsigned char col = 0;
+    unsigned char row = 0;
 
     last_key = 0;
 
@@ -81,7 +85,7 @@ void main(void)
     DDRB = (1 << 3) | (1 << 5) | (1 << 2);
 
     /* Enable pull-ups on keypad columns PB0, PB1, PB4 */
-    PORTB = (1 << 0) | (1 << 1) | (1 << 4);
+    PORTB = (1 << 0) | (1 << 1) | (1 << 4)| (1 << 2);
 
     /* PC3 = software chip select / latch output
        PC2 = keypad column C3 input
@@ -104,10 +108,18 @@ void main(void)
            (1 << SPR0);
 
     SPSR = 0;
+    
+    delay_ms(500);
 
     /* Initialize LCD */
     lcd_init();
-    lcd_puts("welcome");
+    delay_ms(50);
+    lcd_clear();
+    lcd_gotoxy(0, 0);
+    lcd_puts("Type on keypad:");
+    col = 0;
+    row = 1;
+    lcd_gotoxy(col, row);
 
     /* Timer0 normal mode, prescaler = 64 */
     TCCR0A = 0x00;
@@ -127,16 +139,49 @@ void main(void)
         /* Process a newly pressed key only once */
         if ((keypad != 0) && (last_key == 0))
         {
-            if ((keypad >= '0') && (keypad <= '9'))
-            {
-                /* Shift displayed digits to the left */
-                d1 = d2;
-                d2 = d3;
-                d3 = d4;
+            char key = keypad;
 
-                /* Convert ASCII character to numeric digit */
-                d4 = keypad - '0';
+            if (key == 'C')
+            {
+                /* If 'C' is pressed, clear the LCD and reset cursor */
+                lcd_clear();
+                lcd_gotoxy(0, 0);
+                lcd_puts("Type on keypad:");
+                col = 0;
+                row = 1;
+                lcd_gotoxy(col, row);
             }
+            else  
+            
+            {
+                /* For any other key, print it at the current cursor position */
+                lcd_gotoxy(col, row);
+                lcd_data(key);  // Send the single character to LCD
+
+                /* Move cursor to the right */
+                col++; 
+                
+                /* If we reach the end of the line (16 characters), go to next line */
+                if (col >= 16)
+                {
+                    col = 0;
+                    row++;
+                    
+                    /* If we reach the end of the 2nd line, wrap back to top */
+                    if (row >= 2)
+                    {
+                        row = 0;
+                        lcd_clear();
+                        delay_ms(50); // Optional: clear screen when wrapping
+                        lcd_gotoxy(0, 0);
+                        lcd_puts("Type on keypad:");
+                        row = 1;
+                    }
+                }
+            }
+
+            
+
 
             /* Remember the key until it is released */
             last_key = keypad;
@@ -201,6 +246,10 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
     {
         case 0:
             send_data_7seg_keypad(ss_code[d1], 0xE1);
+            if (keypad>0xF){
+                lcd_gotoxy(0,0);
+                lcd_puts("keypad");
+            }
             break;
 
         case 1:
