@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <delay.h>
 #include "lcd.h"
-#include "i2c.h"
-#include "ds1307.h"
+#include <i2c.h>
+#include <ds1307.h>
 
 /* Software chip select / latch */
 #define SS(x) do { \
@@ -77,7 +77,8 @@ void main(void)
     unsigned char col = 0;
     unsigned char row = 0;
     unsigned char h,s,m;
-    char time_str[17];
+    char time_str[17]; 
+    char key;
 
     last_key = 0;
 
@@ -113,7 +114,9 @@ void main(void)
 
     SPSR = 0;
     
+    /* Initialize software I2C and DS1307 */
     i2c_init();
+    rtc_init(0, 0, 0);
     
     delay_ms(500);
 
@@ -122,10 +125,10 @@ void main(void)
     delay_ms(50);
     lcd_clear();
     lcd_gotoxy(0, 0);
-    lcd_puts("Type on keypad:");
-    col = 0;
-    row = 1;
-    lcd_gotoxy(col, row);
+    lcd_puts("Time: 00:00:00");
+
+    lcd_gotoxy(0, 1);
+    lcd_puts("                ");
 
     /* Timer0 normal mode, prescaler = 64 */
     TCCR0A = 0x00;
@@ -142,7 +145,17 @@ void main(void)
 
     while (1)
     
-    {      
+    {      /* Read DS1307 time */
+        rtc_get_time(&h, &m, &s);
+
+        /* Update first LCD line */
+        sprintf(time_str, "Time: %02u:%02u:%02u",
+                (unsigned int)h,
+                (unsigned int)m,
+                (unsigned int)s);
+
+        lcd_gotoxy(0, 0);
+        lcd_puts(time_str);
         
         /* Process a newly pressed key only once */
         if ((keypad != 0) && (last_key == 0))
@@ -201,17 +214,6 @@ void main(void)
             last_key = 0;
         }
     } 
-    rtc_get_time(&h, &m, &s);
-
-    sprintf(time_str, "Time: %02u:%02u:%02u",
-            (unsigned int)h,
-            (unsigned int)m,
-            (unsigned int)s);
-
-    lcd_gotoxy(0, 1);
-    lcd_puts(time_str);
-
-    delay_ms(200);
     }
 
 /* =========================================================
