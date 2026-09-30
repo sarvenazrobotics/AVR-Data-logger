@@ -246,10 +246,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
     {
         case 0:
             send_data_7seg_keypad(ss_code[d1], 0xE1);
-            if (keypad>0xF){
-                lcd_gotoxy(0,0);
-                lcd_puts("keypad");
-            }
+            
             break;
 
         case 1:
