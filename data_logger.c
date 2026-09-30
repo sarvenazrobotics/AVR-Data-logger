@@ -76,6 +76,7 @@ void main(void)
     unsigned char last_key;
     unsigned char col = 0;
     unsigned char row = 0;
+    char h,s,m;
 
     last_key = 0;
 
@@ -139,7 +140,9 @@ void main(void)
     #asm("sei")
 
     while (1)
-    {
+    
+    {    
+        rtc_get_time(&h,&m,&s);
         /* Process a newly pressed key only once */
         if ((keypad != 0) && (last_key == 0))
         {
