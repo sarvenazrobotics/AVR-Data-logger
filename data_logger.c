@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <delay.h>
 #include "lcd.h"
+#include "i2c.h"
+#include "ds1307.h"
 
 /* Software chip select / latch */
 #define SS(x) do { \
@@ -108,6 +110,8 @@ void main(void)
            (1 << SPR0);
 
     SPSR = 0;
+    
+    twi_init();
     
     delay_ms(500);
 
