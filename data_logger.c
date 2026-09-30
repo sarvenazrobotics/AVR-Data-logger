@@ -5,24 +5,23 @@
 
 /* Software chip select / latch */
 #define SS(x) do { \
-    if (x) PORTC |= (1 << 3); \
-    else   PORTC &= ~(1 << 3); \
+    if (x) PORTB |= (1 << 2); \
+    else   PORTB &= ~(1 << 2); \
 } while (0)
 
 /* Keypad columns
    C1 = PB0
    C2 = PB1
-   C3 = PC2  (moved from PB2 because PB2 is SPI SS)
+   C3 = PC3  (moved from PB2 because PB2 is SPI SS)
    C4 = PB4
 */
 #define C1 ((PINB & (1 << 0)) ? 1 : 0)
 #define C2 ((PINB & (1 << 1)) ? 1 : 0)
-#define C3 ((PINC & (1 << 2)) ? 1 : 0)
+#define C3 ((PINC & (1 << 3)) ? 1 : 0)
 #define C4 ((PINB & (1 << 4)) ? 1 : 0)
 
 /* Function prototypes */
-void send_data_7seg_keypad(unsigned char data_7seg,
-                           unsigned char sel_byte);
+void send_data_7seg_keypad(unsigned char data_7seg,unsigned char sel_byte);
 
 char decode_keypad(void);
 
@@ -87,7 +86,8 @@ void main(void)
     /* PC3 = software chip select / latch output
        PC2 = keypad column C3 input
     */
-    DDRC |= (1 << 3);
+    DDRC &= ~(1 << 3); // Set PC3 as INPUT
+    PORTC |= (1 << 3); // Enable pull-up on PC3
     DDRC &= ~(1 << 2);
 
     /* Enable pull-up on PC2 */
