@@ -5,6 +5,7 @@
 #include <delay.h>
 #include "lcd.h"
 #include "twi.h"
+#include "adc.h"
 
 /* =====================================================
    SPI CHIP SELECT / 74HC595 LATCH
@@ -221,6 +222,10 @@ void main(void)
     unsigned char last_key;
     unsigned char col;
     char key;
+    
+    unsigned int adc_value;
+    unsigned long temp10;
+    char temp_buffer[17];
 
     char time_str[17];
 
@@ -277,6 +282,8 @@ void main(void)
     twi_init();
 
     delay_ms(100);
+    
+    adc_init();
 
     /* =================================================
        LCD INITIALIZATION
