@@ -50,10 +50,12 @@ void adc_display_temperature(void)
 
     temp10 = adc_get_temperature();
 
-    sprintf(buffer, "Temp: %u.%u C",
-            (unsigned int)(temp10 / 10),
-            (unsigned int)(temp10 % 10));
+    sprintf(buffer, "Temp: %u.%u",
+        (unsigned int)(temp10 / 10),
+        (unsigned int)(temp10 % 10));
 
-    lcd_gotoxy(0, 1);
-    lcd_puts(buffer);
+            lcd_gotoxy(0, 1);
+            lcd_puts(buffer);
+            lcd_putchar(0xDF);  /* Degree symbol */
+            lcd_putchar('C');
 }

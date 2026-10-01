@@ -107,3 +107,8 @@ void lcd_puts(char *str)
         str++;
     }
 }
+
+void lcd_putchar(char c)
+{
+    lcd_data(c);
+}
