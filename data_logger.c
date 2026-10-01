@@ -6,6 +6,7 @@
 #include "lcd.h"
 #include "twi.h"
 #include "adc.h"
+#include "uart.h"
 
 /* =====================================================
    SPI CHIP SELECT / 74HC595 LATCH
@@ -44,6 +45,7 @@ void send_data_7seg_keypad(unsigned char data_7seg,
 char decode_keypad(void);
 
 unsigned char bcd_to_dec(unsigned char bcd);
+
 
 unsigned char rtc_get_time_twi(unsigned char *hour,
                                unsigned char *min,
@@ -226,6 +228,7 @@ void main(void)
     unsigned int adc_value;
     unsigned long temp10;
     char temp_buffer[17];
+    char uart_buffer[48];
 
     char time_str[17];
 
@@ -284,6 +287,7 @@ void main(void)
     delay_ms(100);
     
     adc_init();
+    uart_init();
 
     /* =================================================
        LCD INITIALIZATION
@@ -331,16 +335,18 @@ void main(void)
 
         if (rtc_ok)
         {
-            sprintf(time_str, "Time: %02u:%02u:%02u",
+            sprintf(uart_buffer, "Time: %02u:%02u:%02u",
                     (unsigned int)h,
                     (unsigned int)m,
                     (unsigned int)s);
 
             lcd_puts(time_str);
+            uart_puts(uart_buffer);
         }
         else
         {
             lcd_puts("RTC I2C ERROR   ");
+            uart_puts(uart_buffer);
         }  
         
         adc_display_temperature();
