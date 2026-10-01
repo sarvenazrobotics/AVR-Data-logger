@@ -340,7 +340,7 @@ void main(void)
                     (unsigned int)m,
                     (unsigned int)s);
 
-            lcd_puts(time_str);
+            lcd_puts(uart_buffer);
             uart_puts(uart_buffer);
         }
         else
