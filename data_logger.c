@@ -319,7 +319,10 @@ void main(void)
        ================================================= */
 
     while (1)
-    {
+    {     
+    
+        
+        
         /* Read DS1307 */
         rtc_ok = rtc_get_time_twi(&h, &m, &s);
 
@@ -338,7 +341,9 @@ void main(void)
         else
         {
             lcd_puts("RTC I2C ERROR   ");
-        }
+        }  
+        
+        adc_display_temperature();
 
         /* Process newly pressed keypad key once */
         if ((keypad != 0) && (last_key == 0))
