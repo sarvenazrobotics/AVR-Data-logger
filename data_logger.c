@@ -1098,12 +1098,12 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
             if (display_mode == DISPLAY_TEMP)
             {
-                send_data_7seg_keypad(ss_code[d2] | 0x80,
+                send_data_7seg_keypad(ss_code[d4] | 0x80,
                                       0xD2);
             }
             else
             {
-                send_data_7seg_keypad(ss_code[d2],
+                send_data_7seg_keypad(ss_code[d3],
                                       0xD2);
             }
 
@@ -1112,7 +1112,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
         case 2:
 
-            send_data_7seg_keypad(ss_code[d3],
+            send_data_7seg_keypad(ss_code[d2],
                                   0xB4);
 
             break;
@@ -1120,7 +1120,7 @@ interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 
         case 3:
 
-            send_data_7seg_keypad(ss_code[d4],
+            send_data_7seg_keypad(ss_code[d1],
                                   0x78);
 
             break;
