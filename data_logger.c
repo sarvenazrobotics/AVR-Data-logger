@@ -7,6 +7,7 @@
 #include "twi.h"
 #include "adc.h"
 #include "uart.h"
+#include "menu.h"
 
 /* =====================================================
    SPI CHIP SELECT / 74HC595 LATCH
@@ -287,7 +288,10 @@ void main(void)
     delay_ms(100);
     
     adc_init();
-    uart_init();
+    uart_init(); 
+    
+    menu_init();
+    menu_show();
 
     /* =================================================
        LCD INITIALIZATION
