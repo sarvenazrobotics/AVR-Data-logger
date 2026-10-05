@@ -290,8 +290,7 @@ void main(void)
     adc_init();
     uart_init(); 
     
-    menu_init();
-    menu_show();
+   
 
     /* =================================================
        LCD INITIALIZATION
@@ -301,13 +300,8 @@ void main(void)
     delay_ms(50);
     lcd_clear();
 
-    lcd_gotoxy(0, 0);
-    lcd_puts("RTC starting...");
-
-    lcd_gotoxy(0, 1);
-    lcd_puts("                ");
-
-    delay_ms(500);
+    menu_init();
+    menu_show();
 
     /* =================================================
        TIMER0 CONFIGURATION
