@@ -1,6 +1,6 @@
 # ATmega328P Multi-Function Clock, Thermometer & UART Monitor
 
-![Proteus Schematic](schematic.png) <!-- Replace with actual screenshot if hosting on Git -->
+
 
 ## 📌 Overview
 This project is a comprehensive embedded systems application built around the **ATmega328P** microcontroller. It serves as a multi-function digital clock, temperature monitor, and serial data transmitter. The system features a menu-driven user interface displayed on a 16x2 LCD, controlled via a 4x4 matrix keypad, with a multiplexed 4-digit 7-segment display for quick data reading.
@@ -61,7 +61,15 @@ Based on the `lcd.h` and main application code:
 *   **LM35 (ADC):** ADC0 (or as configured in `adc.h`)
 *   **UART:** RXD, TXD (Hardware USART)
 
-## 📂 Project Structure
+##  Simulation
+
+https://github.com/user-attachments/assets/c6c20a7c-f4c2-496c-88a8-281093d09122
+
+This video demonstrates the full operational capabilities of the ATmega328P multi-function monitor.
+
+
+
+##  Project Structure
 ```text
 ├── main.c          # Main application logic, ISRs, and initialization
 ├── lcd.h           # LCD function prototypes and pin definitions
