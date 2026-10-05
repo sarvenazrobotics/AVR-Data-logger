@@ -1,37 +1,35 @@
-#include <io.h>
-#include <stdio.h>
-#include "lcd.h"
 #include "menu.h"
-#include "adc.h"
-#include "uart.h"
+#include "lcd.h"
 
-/* Menu states */
-#define MENU_MAIN   0
-#define MENU_CLOCK  1
-#define MENU_TEMP   2
-#define MENU_UART   3
+static unsigned char menu_state;
 
-unsigned char menu_state;
-unsigned char menu_item;
 
 /* Initialize menu */
 void menu_init(void)
 {
     menu_state = MENU_MAIN;
-    menu_item = 1;
 }
 
-/* Show main menu */
+
+/* Return current menu state */
+unsigned char menu_get_state(void)
+{
+    return menu_state;
+}
+
+
+/* Display main menu */
 void menu_show(void)
 {
     lcd_clear();
 
-    lcd_gotoxy(0,0);
+    lcd_gotoxy(0, 0);
     lcd_puts("1.Clock 2.Temp");
 
-    lcd_gotoxy(0,1);
-    lcd_puts("3.UART   Select");
+    lcd_gotoxy(0, 1);
+    lcd_puts("3.UART   C=Back");
 }
+
 
 /* Process keypad key */
 void menu_process_key(char key)
@@ -39,33 +37,22 @@ void menu_process_key(char key)
     switch (menu_state)
     {
         /* ================= MAIN MENU ================= */
+
         case MENU_MAIN:
 
             if (key == '1')
             {
                 menu_state = MENU_CLOCK;
-
-                lcd_clear();
-                lcd_gotoxy(0,0);
-                lcd_puts("CLOCK");
             }
 
             else if (key == '2')
             {
                 menu_state = MENU_TEMP;
-
-                lcd_clear();
-                lcd_gotoxy(0,0);
-                lcd_puts("TEMPERATURE");
             }
 
             else if (key == '3')
             {
                 menu_state = MENU_UART;
-
-                lcd_clear();
-                lcd_gotoxy(0,0);
-                lcd_puts("UART DATA");
             }
 
             break;
